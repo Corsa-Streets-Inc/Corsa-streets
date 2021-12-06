@@ -19,6 +19,6 @@ server.on('error', (err) => {
     console.error(err);
 })
 
-server.listen(8080, '192.168.3.24', () => {
+server.listen(8080, () => {
     console.log("here we go!")
 })
