@@ -26,7 +26,7 @@ const draw = () => {
     ctx.fill();
     ctx.closePath(); 
     ctx.beginPath();
-    ctx.rect(175, 150, 50, 100);
+    ctx.rect(190, 175, 20, 50);
     ctx.fillStyle = "#FF0000";
     ctx.fill();
     ctx.closePath();    
