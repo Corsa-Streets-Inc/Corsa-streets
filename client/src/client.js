@@ -22,11 +22,16 @@ const drawGame = (canvas) => {
 
     var carWidth = 20, carLength = 50;
 
+    var cars = []
+
+    const updateMap = (newCars) => {
+        cars = newCars;
+    }
+
     const drawCar = (x = -10, y = -25, a = 0, color = 'red') => {
         
         ctx.fillStyle = "#00000F";
         ctx.fillRect(0,0,400,400);
-
         ctx.beginPath();
         ctx.save();
         ctx.translate(200, 200)
@@ -37,8 +42,15 @@ const drawGame = (canvas) => {
         ctx.restore();
         ctx.closePath();    
     }
+
+    const drawCars = () => {
+        for (var car in cars) {
+            drawCar(car.x, car.y, car.a, car.color)
+        }
+    }
+
     //setInterval(drawCar, 100)
-    return {drawCar}
+    return {drawCars, updateMap}
 }
 
 const control = (sock) => {
@@ -61,12 +73,13 @@ const control = (sock) => {
 (() => {
     const sock = io();
     var canvas = document.getElementById("canvas");
-    const {drawCar} =  drawGame(canvas);
+    const {drawCars, updateMap} =  drawGame(canvas);
 
-    drawCar()
+    drawCars()
     control(sock);
 
-    
+    sock.on('map', updateMap)
+
     sock.on('message', log)
     document.querySelector("#chat-form").addEventListener("submit", onChatSubmitted(sock))
 })();
