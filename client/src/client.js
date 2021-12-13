@@ -1,7 +1,7 @@
-const log = (text) => {
+const log = (text, id) => {
     const parent = document.querySelector("#events")
     const el = document.createElement("li")
-    el.innerHTML = text;
+    el.innerHTML = id + ': ' + text;
 
     parent.appendChild(el);
     parent.scrollTop = parent.scrollHeight
@@ -17,7 +17,7 @@ const onChatSubmitted = (sock) => (e) => {
     sock.emit('message', text)
 }
 
-const draw = (sock) => {
+const drawGame = (sock) => {
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
     var x = -10, y = -25, a = 0; 
@@ -38,27 +38,31 @@ const draw = (sock) => {
         ctx.restore();
         ctx.closePath();    
     }
-    document.addEventListener('keydown', (e) => {
-        if(e.keyCode == 39) {
-            a += Math.PI / 60;
-        }
-        else if (e.keyCode == 37) {
-            a -= Math.PI / 180;
-        }
-        else if (e.key == " ") {
-            x += 10;
-            y += 10;
-        }
-    })
-
     setInterval(drawCar, 100)
 
 }
 
+const control = (sock) => {
+    document.addEventListener('keydown', (e) => {
+        if(e.keyCode == 39) {
+            sock.emit('command', 'rotate', Math.PI / 60)
+        }
+        else if (e.keyCode == 37) {
+            sock.emit('command', 'rotate', -Math.PI / 60)
+        }
+        else if(e.keyCode == 38) {
+            sock.emit('command', 'move', 2)
+        }
+        else if (e.keyCode == 40){
+            sock.emit('command', 'move', -2)
+        }
+    })
+}
 
 (() => {
     const sock = io();
-    draw(sock);
+    drawGame(sock);
+    control(sock);
     sock.on('message', log)
     document.querySelector("#chat-form").addEventListener("submit", onChatSubmitted(sock))
 })();
