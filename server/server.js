@@ -16,17 +16,36 @@ class Car {
         this.id = id;
         this.x = 0;
         this.y = 0;
-        this.angle = 0;
+        this.a = 0;
         this.color = "red";
     }
 }
 
-var playerCars = new Map();
+var playerCars = {};
+
+
 io.on('connection', (sock) => {
     const id = Math.trunc(Math.random() * 100000);
-    playerCars.set(id,new Car(id));
     io.emit('message', "player " + id + " has connected", id)
-    // sock.emit('initCar')
+
+    playerCars[id] = new Car(id);
+
+    console.log(playerCars);
+    io.emit('map', playerCars);
+
+    sock.on('command', (command, value) => {
+        var car = playerCars[id]
+        if (command == 'move') {
+            car.y += Math.sin(car.a - Math.PI/2)*value;
+            car.x += Math.cos(car.a - Math.PI/2)*value;
+        }
+        else if(command == 'rotate') {
+            car.a += value;
+        }
+        playerCars[id] = car;
+
+        io.emit('map', playerCars)
+    })
     sock.on('message', (text) => io.emit('message', text, id))
 })
 

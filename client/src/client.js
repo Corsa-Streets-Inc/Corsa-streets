@@ -22,21 +22,18 @@ const drawGame = (canvas) => {
 
     var carWidth = 20, carLength = 50;
 
-    var cars = new Map()
+    var cars = {}
 
     const updateMap = (newCars) => {
         cars = newCars;
     }
 
     const drawCar = (x = -10, y = -25, a = 0, color = 'red') => {
-        
-        ctx.fillStyle = "#00000F";
-        ctx.fillRect(0,0,400,400);
         ctx.beginPath();
         ctx.save();
-        ctx.translate(200, 200)
+        ctx.translate(x, y)
         ctx.rotate(a);
-        ctx.rect(x, y, carWidth, carLength);
+        ctx.rect(0, 0, carWidth, carLength);
         ctx.fillStyle = color;
         ctx.fill();
         ctx.restore();
@@ -44,12 +41,14 @@ const drawGame = (canvas) => {
     }
 
     const drawCars = () => {
-        for (var car in cars) {
+        ctx.fillStyle = "#00000F";
+        ctx.fillRect(0,0,400,400);
+        for (var [id, car] of Object.entries(cars)) {
             drawCar(car.x, car.y, car.a, car.color)
         }
     }
 
-    //setInterval(drawCar, 100)
+
     return {drawCars, updateMap}
 }
 
@@ -61,11 +60,11 @@ const control = (sock) => {
         else if (e.keyCode == 37) {
             sock.emit('command', 'rotate', -Math.PI / 60)
         }
-        else if(e.keyCode == 38) {
-            sock.emit('command', 'move', 2)
+        if(e.keyCode == 38) {
+            sock.emit('command', 'move', -2);
         }
         else if (e.keyCode == 40){
-            sock.emit('command', 'move', -2)
+            sock.emit('command', 'move', 2)
         }
     })
 }
@@ -75,7 +74,8 @@ const control = (sock) => {
     var canvas = document.getElementById("canvas");
     const {drawCars, updateMap} =  drawGame(canvas);
 
-    drawCars()
+    setInterval(drawCars, 10)
+
     control(sock);
 
     sock.on('map', updateMap)
