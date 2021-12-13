@@ -17,29 +17,28 @@ const onChatSubmitted = (sock) => (e) => {
     sock.emit('message', text)
 }
 
-const drawGame = (sock) => {
-    var canvas = document.getElementById("canvas");
+const drawGame = (canvas) => {
     var ctx = canvas.getContext("2d");
-    var x = -10, y = -25, a = 0; 
 
-    const drawCar = () => {
-        ctx.beginPath();
-        ctx.rect(0,0,400,400);
+    var carWidth = 20, carLength = 50;
+
+    const drawCar = (x = -10, y = -25, a = 0, color = 'red') => {
+        
         ctx.fillStyle = "#00000F";
-        ctx.fill();
-        ctx.closePath(); 
+        ctx.fillRect(0,0,400,400);
+
         ctx.beginPath();
         ctx.save();
         ctx.translate(200, 200)
         ctx.rotate(a);
-        ctx.rect(x, y, 20, 50);
-        ctx.fillStyle = "#FF0000";
+        ctx.rect(x, y, carWidth, carLength);
+        ctx.fillStyle = color;
         ctx.fill();
         ctx.restore();
         ctx.closePath();    
     }
-    setInterval(drawCar, 100)
-
+    //setInterval(drawCar, 100)
+    return {drawCar}
 }
 
 const control = (sock) => {
@@ -61,8 +60,13 @@ const control = (sock) => {
 
 (() => {
     const sock = io();
-    drawGame(sock);
+    var canvas = document.getElementById("canvas");
+    const {drawCar} =  drawGame(canvas);
+
+    drawCar()
     control(sock);
+
+    
     sock.on('message', log)
     document.querySelector("#chat-form").addEventListener("submit", onChatSubmitted(sock))
 })();
