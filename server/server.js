@@ -21,7 +21,7 @@ var playerCars = new Map();
 
 io.on('connection', (sock) => {
     const id = Math.trunc(Math.random() * 100000);
-    playerCars.set(id,new Car);
+    playerCars.set(id,new Car(id));
     io.emit('message', "player " + id + " has connected", id)
     // sock.emit('initCar')
     sock.on('message', (text) => io.emit('message', text, id))
