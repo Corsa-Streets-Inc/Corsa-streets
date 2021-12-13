@@ -1,6 +1,8 @@
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
+const config = require("./config.js")
+
 
 const app = express();
 
@@ -31,6 +33,6 @@ server.on('error', (err) => {
     console.error(err);
 })
 
-server.listen(8080, 'localhost', () => {
+server.listen(8080, config.adress, () => {
     console.log("here we go!")
 })
