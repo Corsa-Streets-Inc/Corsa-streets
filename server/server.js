@@ -16,11 +16,12 @@ class Car {
         this.id = id;
         this.x = 0;
         this.y = 0;
+        this.angle = 0;
+        this.color = "red";
     }
 }
 
 var playerCars = new Map();
-
 io.on('connection', (sock) => {
     const id = Math.trunc(Math.random() * 100000);
     playerCars.set(id,new Car(id));
