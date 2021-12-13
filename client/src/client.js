@@ -22,7 +22,7 @@ const drawGame = (canvas) => {
 
     var carWidth = 20, carLength = 50;
 
-    var cars = []
+    var cars = new Map()
 
     const updateMap = (newCars) => {
         cars = newCars;
