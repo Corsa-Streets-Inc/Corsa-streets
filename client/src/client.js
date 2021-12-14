@@ -31,8 +31,9 @@ const drawGame = (canvas) => {
     const drawCar = (x = -10, y = -25, a = 0, color = 'red') => {
         ctx.beginPath();
         ctx.save();
-        ctx.translate(x, y)
+        ctx.translate(x+10, y+25)
         ctx.rotate(a);
+        ctx.translate(-10, -25)
         ctx.rect(0, 0, carWidth, carLength);
         ctx.fillStyle = color;
         ctx.fill();
@@ -55,18 +56,33 @@ const drawGame = (canvas) => {
 const control = (sock) => {
     document.addEventListener('keydown', (e) => {
         if(e.keyCode == 39) {
-            sock.emit('command', 'rotate', Math.PI / 60)
+            sock.emit('command', 'rotate', "right")
         }
-        else if (e.keyCode == 37) {
-            sock.emit('command', 'rotate', -Math.PI / 60)
+        if (e.keyCode == 37) {
+            sock.emit('command', 'rotate', "left")
         }
         if(e.keyCode == 38) {
-            sock.emit('command', 'move', -2);
+            sock.emit('command', 'move', "forvard");
         }
-        else if (e.keyCode == 40){
-            sock.emit('command', 'move', 2)
+        if (e.keyCode == 40){
+            sock.emit('command', 'move', "backward")
         }
     })
+    document.addEventListener('keyup', (e) => {
+        if(e.keyCode == 39) {
+            sock.emit('command', 'rotate', "stop")
+        }
+        if (e.keyCode == 37) {
+            sock.emit('command', 'rotate', "stop")
+        }
+        if(e.keyCode == 38) {
+            sock.emit('command', 'move', "stop");
+        }
+        if (e.keyCode == 40){
+            sock.emit('command', 'move', "stop")
+        }
+    })
+
 }
 
 (() => {
