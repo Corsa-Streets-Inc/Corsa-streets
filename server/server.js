@@ -11,6 +11,17 @@ app.use(express.static(`${__dirname}/../client`));
 const server = http.createServer(app);
 const io = socketio(server);
 
+function MacroCollision(obj1,obj2){
+    var XColl=false;
+    var YColl=false;
+  
+    if ((obj1.x + obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width)) XColl = true;
+    if ((obj1.y + obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height)) YColl = true;
+  
+    if (XColl&YColl){return true;}
+    return false;
+  }
+
 class Car {
     constructor(id) {
         this.id = id;
@@ -30,6 +41,20 @@ class Car {
         this.y += Math.sin(this.a - Math.PI/2)*this.move*carSpeed;
         this.x += Math.cos(this.a - Math.PI/2)*this.move*carSpeed;
         this.a += this.rotate*carRotateSpeed;
+
+        this.width=1000;
+        this.height=1000;
+
+    this.tick = function (){
+     for (var i=0; i<playerCars.length; i++){
+
+        if (MacroCollision(this,playerCars[i])){
+                io.emit('boom');
+           }
+   
+         }
+
+    }
     }
 }
 

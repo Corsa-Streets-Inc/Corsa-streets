@@ -17,6 +17,10 @@ const onChatSubmitted = (sock) => (e) => {
     sock.emit('message', text)
 }
 
+const boom = () => () => {
+    alert("БАБАХ")
+}
+
 const drawGame = (canvas) => {
     var ctx = canvas.getContext("2d");
     var headlightWidth = 5, headlightLength = 2;
@@ -146,7 +150,7 @@ const control = (sock) => {
     control(sock);
 
     sock.on('map', updateMap)
-
+    sock.on('boom',boom)
     sock.on('message', log)
     document.querySelector("#chat-form").addEventListener("submit", onChatSubmitted(sock))
 })();
