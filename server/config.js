@@ -1,1 +1,1 @@
-const adress = '25.77.209.239'
+const adress = '192.168.3.24'

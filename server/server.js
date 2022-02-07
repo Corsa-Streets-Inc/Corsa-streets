@@ -20,19 +20,25 @@ class Car {
         this.color = "red";
         this.move = 0;
         this.rotate = 0;
+        this.wok = false;
+        this.sus = false;
+    }
+
+    update() {
+        var carSpeed = 2;
+        var carRotateSpeed = Math.PI / 60;
+        this.y += Math.sin(this.a - Math.PI/2)*this.move*carSpeed;
+        this.x += Math.cos(this.a - Math.PI/2)*this.move*carSpeed;
+        this.a += this.rotate*carRotateSpeed;
     }
 }
 
 var playerCars = {};
 
 setInterval(() => {
-    var carSpeed = 2;
-    var carRotateSpeed = Math.PI / 60;
     for (var [id, car] of Object.entries(playerCars)) {
-        car.y += Math.sin(car.a - Math.PI/2)*car.move*carSpeed;
-        car.x += Math.cos(car.a - Math.PI/2)*car.move*carSpeed;
-        car.a += car.rotate*carRotateSpeed;
-        playerCars[id] = car;
+        
+        playerCars[id].update();
     }
     io.emit('map', playerCars);
 }, 10);
@@ -43,8 +49,6 @@ io.on('connection', (sock) => {
     io.emit('message', "player " + id + " has connected", id)
 
     playerCars[id] = new Car(id);
-
-    console.log(playerCars);
     io.emit('map', playerCars);
 
     sock.on('command', (command, direction) => {
@@ -74,14 +78,25 @@ io.on('connection', (sock) => {
 
         }
         playerCars[id] = car;
+    })
 
+    sock.on("wok", () => {
+        playerCars[id].wok = !playerCars[id].wok
+    })
 
+    sock.on("sus", () => {
+        playerCars[id].sus = !playerCars[id].sus
     })
 
     sock.on('message', (text) => io.emit('message', text, id))
 
+    sock.on('disconnect', () => {
+        delete playerCars[id];
+    })
 
 })
+
+
 
 server.on('error', (err) => {
     console.error(err);
