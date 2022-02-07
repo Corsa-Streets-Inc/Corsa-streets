@@ -23,6 +23,10 @@ class Car {
         this.wok = false;
         this.sus = false;
         this.tireTrack = [];
+        this.headlightWidth = 5;
+        this.headlightLength = 2;
+        this.carWidth = 20;
+        this.carLength = 50;
     }
 
     update() {

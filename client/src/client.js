@@ -19,8 +19,7 @@ const onChatSubmitted = (sock) => (e) => {
 
 const drawGame = (canvas) => {
     var ctx = canvas.getContext("2d");
-    var headlightWidth = 5, headlightLength = 2;
-    var carWidth = 20, carLength = 50;
+    
 
     var cars = {}
 
@@ -28,37 +27,63 @@ const drawGame = (canvas) => {
         cars = newCars;
     }
 
-    const skin1 = () => {
-        ctx.translate(-10, -25)
-        ctx.rect(0, 0, carWidth, carLength);
-        ctx.fill();
-        ctx.fillStyle = "yellow";
-        ctx.fillRect(2,2,headlightWidth,headlightLength);
-        ctx.fillRect(13,2,headlightWidth,headlightLength);
+    const drawCarElements = (car) =>{
+
+        var carWidth = car.carWidth;
+        var carLength = car.carLength;
+        var headlightLength = car.headlightLength;
+        var headlightWidth = car.headlightWidth;
+
+        const skin1 = () => {
+            ctx.translate(-10, -25)
+            ctx.rect(0, 0, carWidth, carLength);
+            ctx.fill();
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(2,2,headlightWidth,headlightLength);
+            ctx.fillRect(13,2,headlightWidth,headlightLength);
+        }
+
+        const skin2 = () => {
+            
+            ctx.translate(-10, -25)
+            ctx.fillRect(0, 0, carWidth, carLength);
+            ctx.fillRect(-5, 5, carWidth, carLength/2);
+            ctx.fillStyle = "black";
+            ctx.fillRect(5, 5, 15, 10);
+            ctx.fillRect(5, 35, 10, 15);
+
+        }
+
+        var fire = new Image()
+        var i = 0;
+        const drawFire = (x, y, a = 0) => {
+            fire.src = "../imgs/wog/"+Math.trunc(i/20)+".png";
+            ctx.beginPath();
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(0.3, 0.3);
+            ctx.drawImage(fire, 0, 0);
+            ctx.restore()
+            ctx.closePath();  
+            i+=2;
+            i%=300;
+        }
+
+        return {skin1, skin2, drawFire}
     }
-
-    const skin2 = () => {
-        
-        ctx.translate(-10, -25)
-        ctx.fillRect(0, 0, carWidth, carLength);
-        ctx.fillRect(-5, 5, carWidth, carLength/2);
-        ctx.fillStyle = "black";
-        ctx.fillRect(5, 5, 15, 10);
-        ctx.fillRect(5, 35, 10, 15);
-
-    }
-
     
 
-    const drawCar = (x = -10, y = -25, a = 0, color = 'red', wok = false, sus = true) => {
+    const drawCar = (car) => {
         
+        const {skin1, skin2, drawFire} = drawCarElements(car);
+
         ctx.beginPath();
         ctx.save();
-        ctx.translate(x+10, y+25)
-        ctx.rotate(a);
-        ctx.fillStyle = color;
+        ctx.translate(car.x+10, car.y+25)
+        ctx.rotate(car.a);
+        ctx.fillStyle = car.color;
 
-        if(sus){
+        if(car.sus){
             skin2();
         }  
         else{
@@ -68,36 +93,24 @@ const drawGame = (canvas) => {
         ctx.restore();
         ctx.closePath();  
 
-        if(wok) {
-            drawFire(x, y);
+        if(car.wok) {
+            drawFire(car.x, car.y);
         }
+
     }
 
-    var fire = new Image()
-    var i = 0;
-    const drawFire = (x, y, a = 0) => {
-        fire.src = "../imgs/wog/"+Math.trunc(i/20)+".png";
-        ctx.beginPath();
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.scale(0.3, 0.3);
-        ctx.drawImage(fire, 0, 0);
-        ctx.restore()
-        ctx.closePath();  
-        i+=2;
-        i%=300;
-    }
+    
 
     const drawCars = () => {
         ctx.fillStyle = "#00000F";
         ctx.fillRect(0,0,400,400);
         for (var [id, car] of Object.entries(cars)) {
-            drawCar(car.x, car.y, car.a, car.color, car.wok, car.sus)
+            drawCar(car)
         }
     }
 
 
-    return {drawCars, updateMap, drawFire}
+    return {drawCars, updateMap}
 }
 
 const control = (sock) => {
@@ -141,7 +154,7 @@ const control = (sock) => {
 (() => {
     const sock = io();
     var canvas = document.getElementById("canvas");
-    const {drawCars, updateMap, drawFire} =  drawGame(canvas);
+    const {drawCars, updateMap} =  drawGame(canvas);
 
     setInterval(drawCars, 10)
 
