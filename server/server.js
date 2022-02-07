@@ -60,11 +60,11 @@ io.on('connection', (sock) => {
     sock.on('command', (command, direction) => {
         var car = playerCars[id]
         if (command == 'move') {
-            if(direction == "forvard"){
-                car.move = -1;
+            if(direction == "forward"){
+                car.move = 1;
             } 
             else if(direction == "backward"){
-                car.move = 1;
+                car.move = -1;
             }
             else if(direction == "stop"){
                 car.move = 0;
