@@ -105,6 +105,7 @@ dist
 
 #VS_code
 ../.DS_Store
+./.DS_Store
 
 #config 
 server/config.js
