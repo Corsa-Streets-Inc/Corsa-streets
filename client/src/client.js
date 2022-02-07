@@ -19,7 +19,7 @@ const onChatSubmitted = (sock) => (e) => {
 
 const drawGame = (canvas) => {
     var ctx = canvas.getContext("2d");
-
+    var headlightWidth = 5, headlightLength = 2;
     var carWidth = 20, carLength = 50;
 
     var cars = {}
@@ -32,7 +32,9 @@ const drawGame = (canvas) => {
         ctx.translate(-10, -25)
         ctx.rect(0, 0, carWidth, carLength);
         ctx.fill();
-
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(2,2,headlightWidth,headlightLength);
+        ctx.fillRect(13,2,headlightWidth,headlightLength);
     }
 
     const skin2 = () => {
@@ -105,7 +107,7 @@ const control = (sock) => {
             sock.emit('command', 'rotate', "left")
         }
         if(e.keyCode == 38) {
-            sock.emit('command', 'move', "forvard");
+            sock.emit('command', 'move', "forward");
         }
         if (e.keyCode == 40){
             sock.emit('command', 'move', "backward")
