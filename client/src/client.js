@@ -46,6 +46,8 @@ const drawGame = (canvas) => {
 
     }
 
+    
+
     const drawCar = (x = -10, y = -25, a = 0, color = 'red', wok = false, sus = true) => {
         
         ctx.beginPath();

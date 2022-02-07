@@ -22,6 +22,7 @@ class Car {
         this.rotate = 0;
         this.wok = false;
         this.sus = false;
+        this.tireTrack = [];
     }
 
     update() {
@@ -30,6 +31,11 @@ class Car {
         this.y += Math.sin(this.a - Math.PI/2)*this.move*carSpeed;
         this.x += Math.cos(this.a - Math.PI/2)*this.move*carSpeed;
         this.a += this.rotate*carRotateSpeed;
+
+        this.tireTrack.push()
+        // for(t in this.tireTrack){
+        //     // t.transparency -= 0.
+        // }
     }
 }
 
