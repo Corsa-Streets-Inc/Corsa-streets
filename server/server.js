@@ -1,7 +1,8 @@
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
-const config = require("./config.js")
+const config = require("./config.js");
+const { triggerAsyncId } = require("async_hooks");
 
 
 const app = express();
@@ -25,18 +26,36 @@ class Car {
         this.tireTrack = [];
         this.headlightWidth = 5;
         this.headlightLength = 2;
-        this.carWidth = 20;
-        this.carLength = 50;
+        this.width = 20;
+        this.length = 50;
+        this.speed = 2;
+        this.rotateSpeed = Math.PI / 60;
+        this.centreX = 0;
+        this.centreY = 0;
     }
 
     update() {
-        var carSpeed = 2;
-        var carRotateSpeed = Math.PI / 60;
+        var a1 = Math.acos(this.width/2/Math.hypot(this.width/2, this.length/2));
+        var newTrack = new Object();
+        newTrack.x1 = this.centreX+(this.x-this.centreX)*(Math.cos(this.a)-Math.tan(Math.PI-a1)*Math.sin(this.a));
+        newTrack.x2 = this.centreX+(this.x+this.width-this.centreX)*(Math.cos(this.a)-Math.tan(a1)*Math.sin(this.a));
+        newTrack.y1 = this.centreY +(this.y+this.length-this.centreY)*(Math.cos(this.a)+1/Math.tan(Math.PI-a1)*Math.sin(this.a));
+        newTrack.y2 = this.centreY +(this.y+this.length-this.centreY)*(Math.cos(this.a)+1/Math.tan(a1)*Math.sin(this.a));
+
+        var carSpeed = this.speed;
+        var carRotateSpeed = this.rotateSpeed;
         this.y += Math.sin(this.a - Math.PI/2)*this.move*carSpeed;
         this.x += Math.cos(this.a - Math.PI/2)*this.move*carSpeed;
+        this.centreX = this.x+this.width/2;
+        this.centreY = this.y+this.length/2;
+
         this.a += this.rotate*carRotateSpeed;
 
-        this.tireTrack.push()
+
+        this.tireTrack.push(newTrack);
+        if(this.tireTrack.length >= 100){
+            this.tireTrack.shift();
+        }
         // for(t in this.tireTrack){
         //     // t.transparency -= 0.
         // }

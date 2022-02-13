@@ -29,8 +29,8 @@ const drawGame = (canvas) => {
 
     const drawCarElements = (car) =>{
 
-        var carWidth = car.carWidth;
-        var carLength = car.carLength;
+        var carWidth = car.width;
+        var carLength = car.length;
         var headlightLength = car.headlightLength;
         var headlightWidth = car.headlightWidth;
 
@@ -69,17 +69,30 @@ const drawGame = (canvas) => {
             i%=300;
         }
 
-        return {skin1, skin2, drawFire}
+        var track = car.tireTrack;
+        const drawTrack = () => {
+            for(tPair of track){            
+                ctx.beginPath();
+                ctx.fillStyle = "white";
+                ctx.arc(tPair.x1, tPair.y1, 1, 0, 2*Math.PI)
+                ctx.arc(tPair.x2, tPair.y2, 1, 0, 2*Math.PI)
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        return {skin1, skin2, drawFire, drawTrack}
     }
     
 
     const drawCar = (car) => {
         
-        const {skin1, skin2, drawFire} = drawCarElements(car);
+        const {skin1, skin2, drawFire, drawTrack} = drawCarElements(car);
 
+        drawTrack();
         ctx.beginPath();
         ctx.save();
-        ctx.translate(car.x+10, car.y+25)
+        ctx.translate(car.centreX, car.centreY)
         ctx.rotate(car.a);
         ctx.fillStyle = car.color;
 
@@ -93,8 +106,10 @@ const drawGame = (canvas) => {
         ctx.restore();
         ctx.closePath();  
 
+
+
         if(car.wok) {
-            drawFire(car.x, car.y);
+           drawFire(car.x, car.y);
         }
 
     }
