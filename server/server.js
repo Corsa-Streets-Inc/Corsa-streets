@@ -35,8 +35,9 @@ class Car {
     }
 
     update() {
-        var a1 = Math.acos(this.width/2/Math.hypot(this.width/2, this.length/2));
+        
         var newTrack = new Object();
+        var a1 = Math.acos(this.width/2/Math.hypot(this.width/2, this.length/2));
         newTrack.x1 = this.centreX+(this.x-this.centreX)*(Math.cos(this.a)-Math.tan(Math.PI-a1)*Math.sin(this.a));
         newTrack.x2 = this.centreX+(this.x+this.width-this.centreX)*(Math.cos(this.a)-Math.tan(a1)*Math.sin(this.a));
         newTrack.y1 = this.centreY +(this.y+this.length-this.centreY)*(Math.cos(this.a)+1/Math.tan(Math.PI-a1)*Math.sin(this.a));
@@ -74,6 +75,9 @@ setInterval(() => {
 
 
 io.on('connection', (sock) => {
+    var address = sock.handshake.address;
+    console.log('New connection from ' + address);
+
     const id = Math.trunc(Math.random() * 100000);
     io.emit('message', "player " + id + " has connected", id)
 
