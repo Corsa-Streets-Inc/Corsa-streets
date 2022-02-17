@@ -19,12 +19,18 @@ const onChatSubmitted = (sock) => (e) => {
 
 const drawGame = (canvas) => {
     var ctx = canvas.getContext("2d");
-    
-
     var cars = {}
-
-    const updateMap = (newCars) => {
+    var mapData;
+    var backgroundColor;
+    const updateMap = (newCars, newMapData) => {
         cars = newCars;
+        mapData = newMapData;
+        backgroundColor = mapData.time == 0 ? "#00000F" : "white";
+    }
+
+    const drawBackGround = () => {
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
     }
 
     const drawCarElements = (car) =>{
@@ -34,6 +40,9 @@ const drawGame = (canvas) => {
         var headlightLength = car.headlightLength;
         var headlightWidth = car.headlightWidth;
 
+        var tiretrackColor = mapData.time == 0 ? "white" : "black";
+
+        
         const skin1 = () => {
             ctx.translate(-10, -25)
             ctx.rect(0, 0, carWidth, carLength);
@@ -48,7 +57,7 @@ const drawGame = (canvas) => {
             ctx.translate(-10, -25)
             ctx.fillRect(0, 0, carWidth, carLength);
             ctx.fillRect(-5, 5, carWidth, carLength/2);
-            ctx.fillStyle = "black";
+            ctx.fillStyle = backgroundColor;
             ctx.fillRect(5, 5, 15, 10);
             ctx.fillRect(5, 35, 10, 15);
 
@@ -73,7 +82,7 @@ const drawGame = (canvas) => {
         const drawTrack = () => {
             for(tPair of track){            
                 ctx.beginPath();
-                ctx.fillStyle = "white";
+                ctx.fillStyle = tiretrackColor;
                 ctx.arc(tPair.x1, tPair.y1, 1, 0, 2*Math.PI)
                 ctx.arc(tPair.x2, tPair.y2, 1, 0, 2*Math.PI)
                 ctx.fill();
@@ -84,17 +93,17 @@ const drawGame = (canvas) => {
         return {skin1, skin2, drawFire, drawTrack}
     }
     
+    
 
     const drawCar = (car) => {
-        
         const {skin1, skin2, drawFire, drawTrack} = drawCarElements(car);
-
         drawTrack();
         ctx.beginPath();
         ctx.save();
         ctx.translate(car.centreX, car.centreY)
         ctx.rotate(car.a);
         ctx.fillStyle = car.color;
+
 
         if(car.sus){
             skin2();
@@ -117,8 +126,7 @@ const drawGame = (canvas) => {
     
 
     const drawCars = () => {
-        ctx.fillStyle = "#00000F";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+        drawBackGround();
         for (var [id, car] of Object.entries(cars)) {
             drawCar(car)
         }

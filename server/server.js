@@ -63,14 +63,29 @@ class Car {
     }
 }
 
-var playerCars = {};
+class GameMap {
+    constructor() {
+        this.time = 0;
+        this.timeType = "real";
+    }
+}
 
+var playerCars = {};
+var mapData = new GameMap();
 setInterval(() => {
     for (var [id, car] of Object.entries(playerCars)) {
-        
         playerCars[id].update();
     }
-    io.emit('map', playerCars);
+    if(mapData.timeType == "real"){
+        var date = new Date();
+        if ((date.getHours() > 20 || date.getHours < 8)){
+            mapData.time = 0;
+        }
+        else{
+            mapData.time = 1;
+        }
+    }
+    io.emit('map', playerCars, mapData);
 }, 10);
 
 
@@ -82,7 +97,7 @@ io.on('connection', (sock) => {
     io.emit('message', "player " + id + " has connected", id)
 
     playerCars[id] = new Car(id);
-    io.emit('map', playerCars);
+    io.emit('map', playerCars, mapData);
 
     sock.on('command', (command, direction) => {
         var car = playerCars[id]
