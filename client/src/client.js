@@ -118,7 +118,7 @@ const drawGame = (canvas) => {
 
     const drawCars = () => {
         ctx.fillStyle = "#00000F";
-        ctx.fillRect(0,0,400,400);
+        ctx.fillRect(0,0,canvas.width,canvas.height);
         for (var [id, car] of Object.entries(cars)) {
             drawCar(car)
         }
@@ -171,7 +171,7 @@ const control = (sock) => {
     var canvas = document.getElementById("canvas");
     const {drawCars, updateMap} =  drawGame(canvas);
 
-    setInterval(drawCars, 10)
+    setInterval(drawCars, 30)
 
     control(sock);
 
